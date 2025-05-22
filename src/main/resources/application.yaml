@@ -1,0 +1,39 @@
+quarkus:
+  smallrye-health:
+    root-path: /internal/health
+    readiness-path: readiness
+  micrometer:
+    export:
+      prometheus:
+        path: /internal/prometheus
+  log:
+    json:
+      log-format: ecs
+      fields:
+        mdc:
+          flat-fields: true
+        timestamp:
+          field-name: '@timestamp'
+        level:
+          field-name: log.level
+        logger-name:
+          field-name: log.logger
+      console:
+        enable: false
+  smallrye-openapi:
+    path: /api/docs
+    enable: true
+  http:
+    non-application-root-path: /
+    redirect-to-non-application-root-path: false
+  test:
+    native-image-profile: test
+  jackson:
+    serialization-inclusion: non_null
+  arc:
+    test:
+      disable-application-lifecycle-observers: true
+mp:
+  openapi:
+    scan:
+      disable: true

@@ -1,0 +1,27 @@
+pluginManagement {
+    def kotlinVersion = null
+    def quarkusBomUrl = "https://repo1.maven.org/maven2/io/quarkus/quarkus-bom/${quarkusVersion}/quarkus-bom-${quarkusVersion}.pom"
+    try (
+        def quarkusBomIs = new URL(quarkusBomUrl).openStream()
+    ) {
+        def slurpedBom = new XmlSlurper().parse(quarkusBomIs)
+        kotlinVersion = slurpedBom
+            .dependencyManagement
+            .dependencies
+            .dependency
+            .find { it.groupId.text() == "org.jetbrains.kotlin" && it.artifactId.text() == "kotlin-compiler"}
+            .version
+            .text()
+    }
+    plugins {
+        id "io.quarkus" version "${quarkusVersion}"
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.toString().startsWith("org.jetbrains.kotlin")) {
+                useVersion(kotlinVersion)
+            }
+        }
+    }
+}
+rootProject.name='quarkus-tests-dont-work'
